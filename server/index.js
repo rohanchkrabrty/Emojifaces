@@ -40,12 +40,14 @@ async function processImage(imageUrl, res) {
                 //draw base image to canvas
                 ctx.drawImage(image, 0, 0);
 
+                //for each face draw equivalent emoji on canvas
                 for (let faceData of facesData) {
                     let face = faceDetect.getSimplifiedFaceDetails(faceData, 16, true);
                     //console.log(face);
                     const emoji = await loadImage("./emojis/" + face.expression + ".png");
                     ctx.drawImage(emoji, face.x, face.y, face.w, face.h);
                 }
+                //to base64
                 details.outputImageUrl = canvas.toDataURL();
                 faceDetect.saveFile('merge.jpg', canvas.toBuffer('image/jpeg'))
                 console.log("Success")
@@ -56,6 +58,7 @@ async function processImage(imageUrl, res) {
         } catch(err) { 
             console.log(err);
         }
+        //send response
         res.send(details);
     }
 }
