@@ -59,29 +59,3 @@ async function processImage(imageUrl, res) {
         res.send(details);
     }
 }
-async function loadEmojis() {
-    //Load Emojis
-    angry = await loadImage("./emojis/angry.png");
-    disgusted = await loadImage("./emojis/disgusted.png");
-    fearful = await loadImage("./emojis/fearful.png");
-    happy = await loadImage("./emojis/happy.png");
-    neutral = await loadImage("./emojis/neutral.png");
-    sad = await loadImage("./emojis/sad.png");
-    surprised = await loadImage("./emojis/surprised.png");
-}
-async function editImage() {
-    const box = {
-        x: 94.7 - 10,
-        y: 60.5 - 10,
-        w: 105.4 + 20,
-        h: 128 + 20
-    }
-    const image = await loadImage("./out/angry.jpg");
-    const canvas = createCanvas(image.width, image.height);
-    const ctx = canvas.getContext('2d');
-    ctx.imageSmoothingEnabled = true;
-    ctx.drawImage(image, 0, 0);
-    ctx.drawImage(angry, box.x, box.y + ((box.h - box.w) / 2), box.w, box.w);
-    faceDetect.saveFile('merge.jpg', canvas.toBuffer('image/jpeg'))
-    console.log("Success")
-}
