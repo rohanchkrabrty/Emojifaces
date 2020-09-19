@@ -1,26 +1,23 @@
 const faceapi = require("face-api.js")
-const mergeImages = require("merge-images")
 const canvas = require("canvas")
-const fs = require("fs")  
+const fs = require("fs")
 const path = require("path")
 
 // mokey pathing the faceapi canvas
-const { Canvas, Image, ImageData } = canvas  
+const { Canvas, Image, ImageData } = canvas
 faceapi.env.monkeyPatch({ Canvas, Image, ImageData })
 
 // simple utils to save files
-const baseDir = path.resolve(__dirname, './out')  
-function saveFile(fileName, buf) {  
+const baseDir = path.resolve(__dirname, './out')
+function saveFile(fileName, buf) {
     if (!fs.existsSync(baseDir)) {
-      fs.mkdirSync(baseDir)
+        fs.mkdirSync(baseDir)
     }
     // this is ok for prototyping but using sync methods
     // is bad practice in NodeJS
     fs.writeFileSync(path.resolve(baseDir, fileName), buf)
-  }
-function merge(){
-
 }
+
 async function loadModels(url) {
     // load weights
     await faceapi.nets.ssdMobilenetv1.loadFromDisk('./models')
@@ -30,10 +27,11 @@ async function loadModels(url) {
     const image = await canvas.loadImage(url)
     //detect face with landmarks and expressions
     const results = await faceapi.detectAllFaces(image).withFaceLandmarks().withFaceExpressions()
-    
+
     const box1 = results[0].detection.box;
     const box2 = results[0].alignedRect.box;
     const expression = results[0].expressions.asSortedArray()[0].expression;
+    console.log(expression)
     // create a new canvas and draw the detection and landmarks
     const out = faceapi.createCanvasFromMedia(image)
     //faceapi.draw.drawDetections(out, results.map(res => res.detection))
@@ -46,4 +44,4 @@ async function loadModels(url) {
     console.log('done, saved results to out/faceLandmarkDetection.jpg')
     //console.log(out.toDataURL())
 }
- module.exports = {loadModels , merge}
+module.exports = { loadModels , saveFile }
