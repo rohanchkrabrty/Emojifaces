@@ -3,7 +3,7 @@ const canvas = require("canvas")
 const fs = require("fs")
 const path = require("path")
 
-// mokey pathing the faceapi canvas
+// monkey pathing the faceapi canvas
 const { Canvas, Image, ImageData } = canvas
 faceapi.env.monkeyPatch({ Canvas, Image, ImageData })
 
@@ -17,12 +17,14 @@ function saveFile(fileName, buf) {
     // is bad practice in NodeJS
     fs.writeFileSync(path.resolve(baseDir, fileName), buf)
 }
+Promise.all([
+    // load weights/models
+    faceapi.nets.ssdMobilenetv1.loadFromDisk('./models'),
+    faceapi.nets.faceLandmark68Net.loadFromDisk('./models'),
+    faceapi.nets.faceExpressionNet.loadFromDisk('./models')
+]).then(response => console.log("Models Loaded"));
 
 async function loadModels(url) {
-    // load weights
-    await faceapi.nets.ssdMobilenetv1.loadFromDisk('./models')
-    await faceapi.nets.faceLandmark68Net.loadFromDisk('./models')
-    await faceapi.nets.faceExpressionNet.loadFromDisk('./models')
     // load the image
     const image = await canvas.loadImage(url)
     //detect face with landmarks and expressions
