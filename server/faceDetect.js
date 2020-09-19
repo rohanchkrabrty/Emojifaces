@@ -3,7 +3,7 @@ const canvas = require("canvas")
 const fs = require("fs")
 const path = require("path")
 
-// monkey pathing the faceapi canvas
+// monkey patching the faceapi canvas
 const { Canvas, Image, ImageData } = canvas
 faceapi.env.monkeyPatch({ Canvas, Image, ImageData })
 
@@ -24,26 +24,30 @@ Promise.all([
     faceapi.nets.faceExpressionNet.loadFromDisk('./models')
 ]).then(response => console.log("Models Loaded"));
 
-async function loadModels(url) {
-    // load the image
-    const image = await canvas.loadImage(url)
+async function detectFacesFromImage(image) {
     //detect face with landmarks and expressions
     const results = await faceapi.detectAllFaces(image).withFaceLandmarks().withFaceExpressions()
-
-    const box1 = results[0].detection.box;
-    const box2 = results[0].alignedRect.box;
-    const expression = results[0].expressions.asSortedArray()[0].expression;
-    console.log(expression)
-    // create a new canvas and draw the detection and landmarks
-    const out = faceapi.createCanvasFromMedia(image)
-    //faceapi.draw.drawDetections(out, results.map(res => res.detection))
-    //faceapi.draw.drawFaceExpressions(out, results)
-    // save the new canvas as image
-    //new faceapi.draw.DrawBox(box1, {lineWidth: 2, boxColor: 'rgba(34, 99, 71, 1)'}).draw(out);
-    //new faceapi.draw.DrawBox(box2, {lineWidth: 2, boxColor: 'rgba(227, 99, 71, 1)'}).draw(out);
-
-    saveFile('detection.jpg', out.toBuffer('image/jpeg'))
-    console.log('done, saved results to out/faceLandmarkDetection.jpg')
-    //console.log(out.toDataURL())
+    return(results)
 }
-module.exports = { loadModels , saveFile }
+function getSimplifiedFaceDetails(faceData, offset, makeBoxSquare){
+    //offset increases/decreases the bounding box of the face result
+    //makeBoxSquare - if true will resize the bounding box to a square for easier scaling
+    var face = {
+        x: faceData.detection.box.x - (offset/2),
+        y: faceData.detection.box.y - (offset/2),
+        w: faceData.detection.box.width + offset,
+        h: faceData.detection.box.height + offset,
+        expression : faceData.expressions.asSortedArray()[0].expression
+    }
+    if(makeBoxSquare){
+        if(face.h >= face.w){
+            face.y += (face.h-face.w)/2;
+            face.h = face.w;
+        }else{
+            face.x += (face.w-face.h)/2;
+            face.w = face.h;
+        }
+    }
+    return face;
+}
+module.exports = { detectFacesFromImage , saveFile , getSimplifiedFaceDetails }
