@@ -18,15 +18,16 @@ function saveFile(fileName, buf) {
     fs.writeFileSync(path.resolve(baseDir, fileName), buf)
 }
 Promise.all([
-    // load weights/models
-    faceapi.nets.ssdMobilenetv1.loadFromDisk('./models'),
+    //load weights/models
+    //faceapi.nets.ssdMobilenetv1.loadFromDisk('./models'),
+    faceapi.nets.tinyFaceDetector.loadFromDisk('./models'),
     faceapi.nets.faceLandmark68Net.loadFromDisk('./models'),
     faceapi.nets.faceExpressionNet.loadFromDisk('./models')
 ]).then(response => console.log("Models Loaded"));
 
 async function detectFacesFromImage(image) {
     //detect face with landmarks and expressions
-    const results = await faceapi.detectAllFaces(image).withFaceLandmarks().withFaceExpressions()
+    const results = await faceapi.detectAllFaces(image, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceExpressions()
     return(results)
 }
 function getSimplifiedFaceDetails(faceData, offset, makeBoxSquare){
