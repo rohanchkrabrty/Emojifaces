@@ -17,6 +17,7 @@ function saveFile(fileName, buf) {
     // is bad practice in NodeJS
     fs.writeFileSync(path.resolve(baseDir, fileName), buf)
 }
+
 Promise.all([
     //load weights/models
     //faceapi.nets.ssdMobilenetv1.loadFromDisk('./models'),

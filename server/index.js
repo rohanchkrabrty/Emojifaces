@@ -12,6 +12,7 @@ app.listen(PORT, () => {
     console.log("Imoji Server running on port " + PORT)
 });
 app.get('/', (req, res) => {
+    console.log('send POST to /imojify for usage');
     res.send('send POST to /imojify for usage');
 });
 app.post('/imojify', (req, res, next) => {
@@ -26,7 +27,7 @@ async function processImage(imageUrl, res) {
             outputImageUrl: null
         }
         try {
-            console.log("Input Url >> " + imageUrl);
+            console.log("Input URl");
             //load image from URL
             const image = await loadImage(imageUrl);
             //get facedetection results
@@ -49,14 +50,14 @@ async function processImage(imageUrl, res) {
                 }
                 //to base64
                 details.outputImageUrl = canvas.toDataURL();
-                faceDetect.saveFile('merge.jpg', canvas.toBuffer('image/jpeg'))
+                //faceDetect.saveFile('merge.jpg', canvas.toBuffer('image/jpeg'))
                 console.log("Success")
             }
             else {
                 console.log("No Face Found")
             }
         } catch(err) { 
-            console.log(err);
+            console.log(imageUrl+">"+err);
         }
         //send response
         res.send(details);
