@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
-    "name": "Imoji",
-    "description": "This will put a emoji on all images that have a face, in a webpage"
+    "name": "Emojifaces",
+    "description": "This will put a emoji on all images that have a face, in a webpage",
     "version": "0.1.0",
     "content_scripts": [
         {
@@ -21,5 +21,10 @@
           "32": "icons/icon32.png"
         },
         "default_title": "Imoji"
+      },
+      "icons": {
+        "16": "icons/icon16.png",
+        "48": "icons/icon48.png",
+       "128": "icons/icon128.png"
       }
 }

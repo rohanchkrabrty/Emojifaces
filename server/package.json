@@ -1,5 +1,5 @@
 {
-  "name": "imoji",
+  "name": "emojifaces",
   "version": "0.1.0",
   "description": "Server for Imoji Extension",
   "main": "index.js",
