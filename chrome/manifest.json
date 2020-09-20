@@ -1,6 +1,7 @@
 {
     "manifest_version": 2,
     "name": "Imoji",
+    "description": "This will put a emoji on all images that have a face, in a webpage"
     "version": "0.1.0",
     "content_scripts": [
         {
@@ -14,7 +15,11 @@
         "scripts": ["background.js"]
       },
       "browser_action": {
-        "default_icon": "icon.png",
+        "default_icon": {
+          "16": "icons/icon16.png",
+          "24": "icons/icon24.png",
+          "32": "icons/icon32.png"
+        },
         "default_title": "Imoji"
       }
 }
