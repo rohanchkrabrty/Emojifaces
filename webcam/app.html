@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emojifaces2</title>
+    <script defer src="face-api.min.js"></script>
+    <script defer src="script.js"></script>
+    <style>
+        div {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+        }
+
+        video {
+            background-color: #000;
+            margin: 20px;
+        }
+
+        canvas {
+            margin: 20px;
+        }
+        #emojis{
+            visibility: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <div id='emojis'>
+        <img id="angry" src="./emojis/angry.png">
+        <img id="happy" src="./emojis/happy.png">
+        <img id="sad" src="./emojis/sad.png">
+        <img id="surprised" src="./emojis/surprised.png">
+        <img id="disgusted" src="./emojis/disgusted.png">
+        <img id="fearful" src="./emojis/fearful.png">
+        <img id="neutral" src="./emojis/neutral.png">
+    </div>
+    <div id='videos'>
+        <video id="video1" width="500" height="375" autoplay="true" muted></video>
+        <video id="video2" width="500" height="375" autoplay="true" muted></video>
+    </div>
+    <div id='canvas'>
+
+    </div>
+</body>
+
+</html>
