@@ -3,47 +3,50 @@ Promise.all([
   faceapi.nets.tinyFaceDetector.loadFromUri('/models'),
   faceapi.nets.faceLandmark68Net.loadFromUri('/models'),
   faceapi.nets.faceExpressionNet.loadFromUri('/models')
-]).then(alert("Models Loaded"))
-// Called when the user clicks on the browser action.
+]);
+
+// Called when the user clicks on the extension
 chrome.browserAction.onClicked.addListener(function (tab) {
-  // Send a message to the active tab
-  sendMessageToActiveTab({ "message": "browserAction" })
+  sendMessageToActiveTab({ "type": "browserAction" })
 });
-function sendMessageToActiveTab(message) {
+
+//listens for incoming messages
+chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+  switch (message.type) {
+    case 'fetchModifiedImage':
+      break;
+  }
+});
+
+function sendMessageToActiveTab(message) { // Send a message to the active tab
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     var activeTab = tabs[0];
     chrome.tabs.sendMessage(activeTab.id, message);
   });
 }
 
-//listens for incoming messages
-chrome.runtime.onMessage.addListener(
-  function (request, sender, sendResponse) {
-    if (request.message === "loadModels") {
-      //loadModels().then(sendMessageToActiveTab({ "message": "loadedModels" }))
+function fetchModifiedImage(img, activeTab) {
+  //chrome.tabs.sendMessage(activeTab.id, { "message": "fetchedModifiedImage", "response": xhr.responseText });
+}
+
+function getSimplifiedFaceDetection(faceData, offset, makeBoxSquare) {
+  //offset increases/decreases the bounding box of the face result
+  //makeBoxSquare - if true will resize the bounding box to a square for easier scaling
+  var face = {
+    x: faceData.detection.box.x - (offset / 2),
+    y: faceData.detection.box.y - (offset / 2),
+    w: faceData.detection.box.width + offset,
+    h: faceData.detection.box.height + offset,
+    expression: faceData.expressions.asSortedArray()[0].expression
+  }
+  if (makeBoxSquare) {
+    if (face.h >= face.w) {
+      face.y += (face.h - face.w) / 2;
+      face.h = face.w;
+    } else {
+      face.x += (face.w - face.h) / 2;
+      face.w = face.h;
     }
   }
-);
-/*
-function fetchModifiedImage(url, activeTab) {
-  var xhr = new XMLHttpRequest();
-  const json = {
-    "url": url
-};
-  xhr.open("POST", "http://localhost:5000/imojify", true);
-  xhr.onload = function (e) {
-    if (xhr.readyState === 4) {
-      if (xhr.status === 200) {
-        chrome.tabs.sendMessage(activeTab.id, { "message": "fetchedModifiedImage", "response": xhr.responseText });
-      } else {
-        chrome.tabs.sendMessage(activeTab.id, { "message": "fetchedModifiedImage", "response": null });
-      }
-    }
-  };
-  xhr.onerror = function (e) {
-    chrome.tabs.sendMessage(activeTab.id, { "message": "fetchedModifiedImage", "response": null });
-  };
-  xhr.setRequestHeader('Content-Type', 'application/json');
-  xhr.send(JSON.stringify(json));
+  return face;
 }
-*/

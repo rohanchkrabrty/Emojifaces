@@ -37,13 +37,13 @@ video1.addEventListener('play', () => {
         faceapi.draw.drawFaceExpressions(canvas1, resizedDetections)
         for (let resizedDetection of resizedDetections) {
             //draw emoji for each face
-            var face = getSimplifiedFaceDetails(resizedDetection, 5, true)
+            var face = getSimplifiedFaceDetection(resizedDetection, 5, true)
             const emoji = document.getElementById(face.expression);
             ctx2.drawImage(emoji, face.x, face.y, face.w, face.h);
         }
     }, 100)
 })
-function getSimplifiedFaceDetails(faceData, offset, makeBoxSquare) {
+function getSimplifiedFaceDetection(faceData, offset, makeBoxSquare) {
     //offset increases/decreases the bounding box of the face result
     //makeBoxSquare - if true will resize the bounding box to a square for easier scaling
     var face = {
