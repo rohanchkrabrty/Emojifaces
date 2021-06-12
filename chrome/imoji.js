@@ -1,5 +1,35 @@
 console.log("Imoji.js Loaded");
-
+var port;
+chrome.runtime.onConnect.addListener(function (port) {
+  window.port = port;
+  port.onMessage.addListener(function (message) {
+    if (message.type == "start") {
+      fetchAllImages();
+      fetchImagesAfterLoad();
+    }
+    if (message.type == "fetchedModifiedImage") {
+      if (message.newImgSrc != null) {
+        var images = document.getElementsByTagName("img");
+        for (let img of images) {
+          if (img.src == message.imgSrc) {
+            console.log(img);
+            if (img.hasAttribute('srcset'))
+              img.srcset = message.newImgSrc;
+            img.src = message.newImgSrc;
+            break;
+          }
+        }
+      }
+    }
+  });
+});
+/*//create message connection
+var port = chrome.runtime.connect();
+port.postMessage({ type: "test" });
+port.onMessage.addListener(function (message) {
+  if (message.type == "test2")
+    alert("test2");
+});
 //message listener
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   switch (message.type) {
@@ -11,15 +41,14 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       break;
   }
 });
-
+*/
 function fetchAllImages() { //fetches all images - used during start
   var images = document.getElementsByTagName("img");
   for (let img of images) {
     if (isImageValid(img)) {
       img.classList.add("imoji");
-      //send to server
-      chrome.runtime.sendMessage({ "type": "fetchModifiedImage", "img": img });
-
+      //send to servers
+      port.postMessage({ "type": "fetchModifiedImage", "imgSrc": img.src });
     }
   }
 };
